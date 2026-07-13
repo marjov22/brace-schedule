@@ -3,451 +3,511 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#1C1B22">
+<meta name="theme-color" content="#0a0a0a">
 <title>Brace Schedule</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦷</text></svg>">
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Nunito:wght@400;500;600;700&display=swap');
+
   :root{
-    --bg: #15141b;
-    --bg-elev: #1d1c26;
-    --bg-elev-2: #252330;
-    --line: #322f3d;
-    --ink: #f1eef7;
-    --ink-dim: #a9a4bb;
-    --ink-faint: #6f6a82;
-    --upper: #7fd1ae;
-    --upper-dim: #2c4a40;
-    --lower: #e8a87c;
-    --lower-dim: #4a3a2c;
-    --pause: #45414f;
-    --danger: #e8748c;
-    --radius: 18px;
-    --radius-sm: 12px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --bg:        #0a0a0a;
+    --bg-card:   #141414;
+    --bg-card-2: #1c1c1c;
+    --line:      #222222;
+    --ink:       #e6edf3;
+    --ink-dim:   #7d8590;
+    --ink-faint: #3d444d;
+    --upper:     #3fb950;
+    --lower:     #58a6ff;
+    --danger:    #f78166;
+    --accent:    #58a6ff;
+    --radius:    14px;
+    --radius-sm: 9px;
+    --font-body: 'Nunito', system-ui, sans-serif;
+    --font-head: 'Sora', system-ui, sans-serif;
   }
 
-  *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin:0; padding:0; }
 
   body{
-    margin:0;
+    font-family: var(--font-body);
     background: var(--bg);
     color: var(--ink);
     min-height: 100vh;
     padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    font-size: 14px;
+    line-height: 1.5;
   }
 
   .wrap{
     max-width: 480px;
     margin: 0 auto;
-    padding: 28px 18px 60px;
+    padding: 22px 16px 88px;
   }
 
+  /* ── Header ── */
   header.top{
-    display:flex;
-    align-items:baseline;
+    display: flex;
+    align-items: center;
     justify-content: space-between;
-    margin-bottom: 22px;
+    margin-bottom: 20px;
   }
-
   header.top h1{
-    font-size: 19px;
+    font-family: var(--font-head);
+    font-size: 16px;
     font-weight: 700;
+    color: var(--ink-dim);
     letter-spacing: -0.01em;
-    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 7px;
   }
-
   header.top .today-date{
-    font-size: 13px;
-    color: var(--ink-faint);
-    font-variant-numeric: tabular-nums;
+    font-family: var(--font-head);
+    font-size: 12px;
+    color: var(--ink-dim);
+    font-weight: 600;
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 4px 11px;
   }
 
-  /* ---- Today hero ---- */
-  .today-card{
-    background: var(--bg-elev);
+  /* ── Hero status — two side-by-side brace cards ── */
+  .status-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .status-tile{
+    background: var(--bg-card);
     border: 1px solid var(--line);
     border-radius: var(--radius);
-    padding: 22px 20px;
-    margin-bottom: 16px;
+    padding: 16px 14px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
-
-  .today-label{
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--ink-faint);
-    margin-bottom: 14px;
-    font-weight: 600;
+  .status-tile .tile-head{
+    display: flex;
+    align-items: center;
+    gap: 7px;
   }
-
-  .brace-row{
-    display:flex;
-    align-items:center;
-    gap: 14px;
-    padding: 12px 0;
-  }
-  .brace-row + .brace-row{
-    border-top: 1px solid var(--line);
-  }
-
-  .dot{
-    width: 11px; height: 11px;
+  .tile-dot{
+    width: 7px; height: 7px;
     border-radius: 50%;
     flex: none;
   }
-  .dot.upper{ background: var(--upper); }
-  .dot.lower{ background: var(--lower); }
-
-  .brace-name{
-    font-size: 15px;
-    font-weight: 600;
-    flex: none;
-    width: 56px;
-  }
-
-  .brace-status{
-    flex: 1;
-    font-size: 15px;
+  .tile-dot.upper{ background: var(--upper); }
+  .tile-dot.lower{ background: var(--lower); }
+  .tile-label{
+    font-family: var(--font-head);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
     color: var(--ink-dim);
   }
-
-  .pill{
-    font-size: 12.5px;
-    font-weight: 700;
-    padding: 6px 12px;
-    border-radius: 999px;
-    white-space: nowrap;
+  .tile-status{
+    font-family: var(--font-head);
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.02em;
   }
-  .pill.wear{ background: rgba(127,209,174,0.16); color: var(--upper); }
-  .pill.pause{ background: rgba(232,116,140,0.16); color: var(--danger); }
-  .brace-row.lower .pill.wear{ background: rgba(232,168,124,0.16); color: var(--lower); }
-
-  /* ---- Upcoming strip ---- */
-  .section-title{
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--ink-faint);
+  .tile-status.wear-upper{ color: var(--upper); }
+  .tile-status.wear-lower{ color: var(--lower); }
+  .tile-status.pause{ color: var(--ink-faint); }
+  .tile-sub{
+    font-size: 11.5px;
+    color: var(--ink-dim);
     font-weight: 600;
-    margin: 26px 4px 10px;
   }
 
+  /* ── Control banner ── */
+  .control-banner{
+    border-radius: var(--radius-sm);
+    padding: 11px 14px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .control-banner.soon{
+    background: rgba(247,129,102,0.07);
+    border: 1px solid rgba(247,129,102,0.18);
+    border-left: 3px solid var(--danger);
+    color: var(--danger);
+  }
+  .control-banner.today{
+    background: rgba(247,129,102,0.1);
+    border: 1px solid rgba(247,129,102,0.22);
+    border-left: 3px solid var(--danger);
+    color: var(--danger);
+  }
+  .control-banner.future{
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--ink-faint);
+    color: var(--ink-dim);
+  }
+  .control-banner .cb-icon{ font-size: 14px; flex: none; }
+  .control-banner .cb-text{ flex: 1; line-height: 1.4; }
+  .control-banner .cb-days{ font-size: 11px; opacity: 0.7; margin-top: 1px; }
+  .control-banner .cb-gcal{
+    display: flex; align-items: center; flex: none;
+    text-decoration: none; opacity: 0.4;
+  }
+  .control-banner .cb-gcal:hover{ opacity: 0.85; }
+  .control-banner .cb-gcal svg{ width: 18px; height: 18px; display: block; }
+
+  /* ── Section label ── */
+  .section-title{
+    font-family: var(--font-head);
+    font-size: 9.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-faint);
+    margin: 18px 2px 8px;
+  }
+
+  /* ── Upcoming list ── */
   .upcoming{
-    background: var(--bg-elev);
+    background: var(--bg-card);
     border: 1px solid var(--line);
     border-radius: var(--radius);
     overflow: hidden;
   }
-
   .day-row{
     display: grid;
-    grid-template-columns: 78px 1fr 1fr;
+    grid-template-columns: 80px 1fr 1fr;
     align-items: center;
-    padding: 11px 16px;
-    font-size: 14px;
+    padding: 9px 14px;
+    font-size: 12.5px;
   }
+  .day-row:nth-child(even){ background: rgba(255,255,255,0.015); }
   .day-row + .day-row{ border-top: 1px solid var(--line); }
-  .day-row.is-today{ background: var(--bg-elev-2); }
-
   .day-date{
     color: var(--ink-dim);
+    font-weight: 600;
     font-variant-numeric: tabular-nums;
+    font-size: 12px;
   }
-  .day-row.is-today .day-date{ color: var(--ink); font-weight: 700; }
-
   .tag{
     justify-self: start;
-    font-size: 12px;
+    font-family: var(--font-head);
+    font-size: 9.5px;
     font-weight: 700;
-    padding: 4px 9px;
-    border-radius: 7px;
+    padding: 3px 7px;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
   }
-  .tag.wear-u{ background: rgba(127,209,174,0.14); color: var(--upper); }
-  .tag.wear-l{ background: rgba(232,168,124,0.14); color: var(--lower); }
-  .tag.pause{ background: rgba(255,255,255,0.06); color: var(--ink-faint); }
+  .tag.wear-u{ background: rgba(63,185,80,0.1); color: var(--upper); }
+  .tag.wear-l{ background: rgba(88,166,255,0.1); color: var(--lower); }
+  .tag.pause{ color: var(--ink-faint); font-size: 11px; letter-spacing: 0; text-transform: none; }
 
-  /* ---- Setup cards ---- */
-  .setup-card{
-    background: var(--bg-elev);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    padding: 18px 18px 16px;
-    margin-bottom: 14px;
-  }
-
-  .setup-head{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin-bottom: 14px;
-  }
-  .setup-head .dot{ width:10px; height:10px; }
-  .setup-head h2{
-    font-size: 15px;
-    margin:0;
-    font-weight: 700;
-  }
-
-  .field-row{
-    display:flex;
-    gap: 10px;
-    margin-bottom: 10px;
-  }
-  .field{
-    flex:1;
-    display:flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .field label{
+  /* ── Legend ── */
+  .legend{
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    margin-top: 12px;
     font-size: 11.5px;
     color: var(--ink-faint);
     font-weight: 600;
   }
-  input[type="date"], input[type="number"]{
-    background: var(--bg-elev-2);
+  .legend span{ display: flex; align-items: center; gap: 5px; }
+  .dot{ width: 7px; height: 7px; border-radius: 50%; flex: none; }
+  .dot.upper{ background: var(--upper); }
+  .dot.lower{ background: var(--lower); }
+
+  /* ── Edit cards ── */
+  .setup-card{
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .setup-head{
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--line);
+    background: var(--bg-card-2);
+  }
+  .setup-head .dot{ width: 7px; height: 7px; }
+  .setup-head .emoji-icon{ font-size: 14px; line-height: 1; }
+  .setup-head h2{
+    font-family: var(--font-head);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .setup-body{
+    padding: 14px 16px;
+  }
+  .field-row{
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .field-row:last-child{ margin-bottom: 0; }
+  .field{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .field label{
+    font-family: var(--font-head);
+    font-size: 9.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+  }
+  input[type="date"], input[type="number"], input[type="time"]{
+    background: var(--bg-card-2);
     border: 1px solid var(--line);
     color: var(--ink);
     border-radius: var(--radius-sm);
-    padding: 10px 11px;
-    font-size: 15px;
+    padding: 9px 11px;
+    font-size: 13.5px;
     font-family: inherit;
+    font-weight: 600;
     width: 100%;
     font-variant-numeric: tabular-nums;
   }
-  input:focus{
-    outline: 2px solid var(--ink-faint);
-    outline-offset: 1px;
-  }
+  input:focus{ outline: none; border-color: var(--accent); }
 
-  .history{
-    margin-top: 4px;
-  }
-  .history-item{
-    display:flex;
-    align-items:center;
-    justify-content: space-between;
-    gap: 8px;
-    padding: 8px 0;
-    font-size: 13px;
-    color: var(--ink-dim);
-  }
-  .history-item + .history-item{ border-top: 1px dashed var(--line); }
-  .history-item .desc{ flex:1; }
-  .history-item .desc b{ color: var(--ink); }
-  .history-item button{
-    background:none;
-    border:none;
-    color: var(--danger);
-    font-size: 12px;
-    font-weight: 600;
-    padding: 4px 6px;
-    cursor:pointer;
-  }
-
-  .btn{
-    border: none;
-    border-radius: var(--radius-sm);
-    padding: 11px 14px;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    font-family: inherit;
-  }
-  .btn.primary{
-    background: var(--ink);
-    color: var(--bg);
+  /* ── Save button ── */
+  .save-btn{
+    display: block;
     width: 100%;
-    margin-top: 6px;
-  }
-  .btn.primary:active{ opacity: 0.8; }
-  .btn.primary.upper{ background: var(--upper); }
-  .btn.primary.lower{ background: var(--lower); }
-
-  .btn.ghost{
-    background: transparent;
-    border: 1px solid var(--line);
-    color: var(--ink-dim);
-  }
-
-  .toggle-link{
-    display:block;
-    text-align:center;
-    color: var(--ink-faint);
-    font-size: 13px;
-    margin-top: 22px;
-    text-decoration: underline;
+    margin-top: 10px;
+    padding: 17px;
+    background: #4cd964;
+    color: #000;
+    border: none;
+    border-radius: 50px;
+    font-family: var(--font-head);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
     cursor: pointer;
-    background:none;
-    border:none;
-    font-family: inherit;
-    width:100%;
-    padding: 10px;
   }
+  .save-btn:active{ opacity: 0.85; }
 
-  .hidden{ display:none !important; }
-
+  /* ── Misc ── */
+  .hidden{ display: none !important; }
   .empty-hint{
-    text-align:center;
-    color: var(--ink-faint);
+    text-align: center;
+    color: var(--ink-dim);
     font-size: 14px;
-    padding: 40px 20px;
-    line-height: 1.5;
+    padding: 56px 20px;
+    line-height: 1.7;
   }
 
-  .legend{
-    display:flex;
-    gap: 16px;
-    justify-content:center;
-    margin-top: 18px;
-    font-size: 12px;
-    color: var(--ink-faint);
-  }
-  .legend span{ display:flex; align-items:center; gap:6px; }
-
-  /* ---- Tab bar ---- */
+  /* ── Bottom tab bar ── */
   .tabbar{
-    display:flex;
-    gap: 6px;
-    background: var(--bg-elev);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 4px;
-    margin-bottom: 20px;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    display: flex;
+    background: #0a0a0a;
+    border-top: 1px solid #1e1e1e;
+    padding: 10px 0 calc(12px + env(safe-area-inset-bottom));
+    z-index: 100;
   }
   .tabbar button{
-    flex:1;
+    flex: 1;
     background: transparent;
     border: none;
-    color: var(--ink-faint);
-    font-family: inherit;
-    font-size: 13.5px;
-    font-weight: 600;
-    padding: 9px 4px;
-    border-radius: 11px;
+    color: #555;
+    padding: 2px 0;
     cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-head);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
   }
-  .tabbar button.active{
-    background: var(--bg-elev-2);
-    color: var(--ink);
-  }
+  .tabbar button svg{ width: 22px; height: 22px; display: block; }
+  .tabbar button.active{ color: #fff; }
 
-  /* ---- Calendar view ---- */
+  /* ── Calendar ── */
   .cal-nav{
-    display:flex;
-    align-items:center;
+    display: flex;
+    align-items: center;
     justify-content: space-between;
     margin-bottom: 14px;
   }
-  .cal-nav button{
-    background: var(--bg-elev);
+  .cal-nav-btn{
+    background: var(--bg-card);
     border: 1px solid var(--line);
-    color: var(--ink);
-    width: 38px;
-    height: 38px;
-    border-radius: 11px;
-    font-size: 17px;
-    cursor: pointer;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-  }
-  .cal-nav button:active{ background: var(--bg-elev-2); }
-  .cal-nav .cal-month-label{
-    font-size: 16px;
-    font-weight: 700;
-  }
-  .cal-nav .cal-today-btn{
-    width:auto;
-    padding: 0 12px;
-    font-size: 12.5px;
-    font-weight: 600;
     color: var(--ink-dim);
+    width: 34px; height: 34px;
+    border-radius: var(--radius-sm);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-
-  .cal-weekdays{
-    display:grid;
-    grid-template-columns: repeat(7, 1fr);
-    text-align:center;
-    font-size: 10.5px;
+  .cal-month-label{
+    font-family: var(--font-head);
+    font-size: 15px;
     font-weight: 700;
-    letter-spacing: 0.04em;
+    color: var(--ink);
+  }
+  .cal-today-btn{
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--ink-dim);
+    border-radius: 20px;
+    padding: 3px 11px;
+    font-size: 11.5px;
+    font-weight: 600;
+    font-family: var(--font-body);
+    cursor: pointer;
+    display: block;
+    margin: -8px 0 12px auto;
+  }
+  .cal-weekdays{
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-family: var(--font-head);
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
     color: var(--ink-faint);
     margin-bottom: 6px;
   }
-  .cal-weekdays span{ padding: 4px 0; }
-
+  .cal-weekdays span{ padding: 3px 0; }
   .cal-grid{
-    display:grid;
+    display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 5px;
+    gap: 4px;
   }
-
   .cal-cell{
     aspect-ratio: 1;
-    border-radius: 11px;
-    background: var(--bg-elev);
+    border-radius: var(--radius-sm);
+    background: var(--bg-card);
     border: 1px solid var(--line);
-    display:flex;
+    display: flex;
     flex-direction: column;
-    align-items:center;
-    justify-content:center;
+    align-items: center;
+    justify-content: center;
     gap: 3px;
-    position: relative;
-    padding: 4px 2px;
+    padding: 2px;
+    cursor: pointer;
   }
-  .cal-cell.empty{ background: transparent; border-color: transparent; }
-  .cal-cell.is-today{ border-color: var(--ink-dim); border-width: 1.5px; }
-
+  .cal-cell.empty{ background: transparent; border-color: transparent; cursor: default; }
+  .cal-cell.is-today{
+    background: #2a2a2a;
+    border-color: #444;
+  }
+  .cal-cell.is-today .cal-daynum{ color: #fff; }
+  .cal-cell.selected{
+    background: var(--bg-card-2);
+    border-color: var(--ink-dim);
+  }
   .cal-daynum{
-    font-size: 12px;
+    font-family: var(--font-head);
+    font-size: 11px;
     font-weight: 700;
     color: var(--ink-dim);
     font-variant-numeric: tabular-nums;
   }
-  .cal-cell.is-today .cal-daynum{ color: var(--ink); }
-
-  .cal-marks{
-    display:flex;
-    gap: 4px;
-  }
+  .cal-marks{ display: flex; gap: 2px; }
   .cal-mark{
-    width: 7px;
-    height: 7px;
+    width: 5px; height: 5px;
     border-radius: 50%;
-    border: 1.4px solid transparent;
+    border: 1px solid transparent;
   }
   .cal-mark.u-wear{ background: var(--upper); }
-  .cal-mark.u-pause{ background: transparent; border-color: var(--upper); opacity: 0.55; }
+  .cal-mark.u-pause{ background: transparent; border-color: var(--upper); opacity: 0.4; }
   .cal-mark.l-wear{ background: var(--lower); }
-  .cal-mark.l-pause{ background: transparent; border-color: var(--lower); opacity: 0.55; }
-  .cal-mark.none{ background: var(--ink-faint); opacity: 0.25; }
+  .cal-mark.l-pause{ background: transparent; border-color: var(--lower); opacity: 0.4; }
+  .cal-mark.none{ background: transparent; }
 
   .cal-legend{
-    margin-top: 18px;
-    font-size: 12px;
-    color: var(--ink-faint);
-    display:flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .cal-legend .row{ display:flex; align-items:center; gap:10px; }
-  .cal-legend .swatch{ width:9px; height:9px; border-radius:50%; flex:none; }
-  .cal-legend .swatch.hollow{ background: transparent; border: 1.4px solid currentColor; opacity:.55; }
-
-  /* Day detail popover */
-  .day-detail{
     margin-top: 14px;
-    background: var(--bg-elev);
+    font-size: 11.5px;
+    color: var(--ink-dim);
+    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+  }
+  .cal-legend .row{ display: flex; align-items: center; gap: 8px; justify-content: center; }
+  .cal-legend .swatch{ width: 6px; height: 6px; border-radius: 50%; flex: none; }
+  .cal-legend .swatch.hollow{ background: transparent; border: 1px solid currentColor; opacity: .45; }
+
+  .day-detail{
+    margin-top: 10px;
+    background: var(--bg-card);
     border: 1px solid var(--line);
     border-radius: var(--radius);
-    padding: 16px 18px;
+    overflow: hidden;
   }
   .day-detail .dd-date{
-    font-size: 14px;
+    font-family: var(--font-head);
+    font-size: 10.5px;
     font-weight: 700;
-    margin-bottom: 10px;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    background: var(--bg-card-2);
   }
+  /* reuse brace-row styles inside day detail */
+  .brace-row{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+  }
+  .brace-row + .brace-row{ border-top: 1px solid var(--line); }
+  .brace-name{
+    font-family: var(--font-head);
+    font-size: 13px;
+    font-weight: 700;
+    flex: none;
+    width: 52px;
+    color: var(--ink);
+  }
+  .brace-status{
+    flex: 1;
+    font-size: 13px;
+    color: var(--ink-dim);
+  }
+  .pill{
+    font-family: var(--font-head);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 9px;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .pill.wear{ background: rgba(63,185,80,0.12); color: var(--upper); border: 1px solid rgba(63,185,80,0.2); }
+  .pill.pause{ background: rgba(247,129,102,0.1); color: var(--danger); border: 1px solid rgba(247,129,102,0.2); }
+  .brace-row.lower .pill.wear{ background: rgba(88,166,255,0.1); color: var(--lower); border: 1px solid rgba(88,166,255,0.2); }
 </style>
 </head>
 <body>
@@ -459,25 +519,36 @@
     <div class="today-date" id="todayDateLabel"></div>
   </header>
 
-  <div class="tabbar">
-    <button id="tabTodayBtn" class="active">Today</button>
-    <button id="tabCalendarBtn">Calendar</button>
-    <button id="tabEditBtn">Edit</button>
-  </div>
-
   <!-- TODAY VIEW -->
   <div id="todayView">
     <div id="emptyHint" class="empty-hint hidden">
-      No schedule set up yet.<br>Tap "Edit" above to add your start dates.
+      No schedule set up yet.<br>Tap ⚙️ below to add your start dates.
     </div>
 
-    <div id="todayCard" class="today-card hidden">
-      <div class="today-label" id="todayLabel">Today</div>
-      <div id="todayRows"></div>
+    <div id="controlBanner" class="hidden"></div>
+
+    <!-- Hero: two side-by-side status tiles -->
+    <div id="statusGrid" class="status-grid hidden">
+      <div class="status-tile" id="tileUpper">
+        <div class="tile-head">
+          <span class="tile-dot upper"></span>
+          <span class="tile-label">Upper</span>
+        </div>
+        <div class="tile-status" id="tileUpperStatus">—</div>
+        <div class="tile-sub" id="tileUpperSub"></div>
+      </div>
+      <div class="status-tile" id="tileLower">
+        <div class="tile-head">
+          <span class="tile-dot lower"></span>
+          <span class="tile-label">Lower</span>
+        </div>
+        <div class="tile-status" id="tileLowerStatus">—</div>
+        <div class="tile-sub" id="tileLowerSub"></div>
+      </div>
     </div>
 
     <div id="upcomingSection" class="hidden">
-      <div class="section-title">Next 14 days</div>
+      <div class="section-title">Next 7 days</div>
       <div class="upcoming" id="upcomingList"></div>
     </div>
 
@@ -490,14 +561,14 @@
   <!-- CALENDAR VIEW -->
   <div id="calendarView" class="hidden">
     <div class="cal-nav">
-      <button id="calPrevBtn" aria-label="Previous month">‹</button>
-      <span class="cal-month-label" id="calMonthLabel">June 2026</span>
-      <button id="calNextBtn" aria-label="Next month">›</button>
+      <button class="cal-nav-btn" id="calPrevBtn" aria-label="Previous month">‹</button>
+      <span class="cal-month-label" id="calMonthLabel"></span>
+      <button class="cal-nav-btn" id="calNextBtn" aria-label="Next month">›</button>
     </div>
-    <button class="cal-nav cal-today-btn" id="calTodayBtn" style="margin: -6px 0 12px auto; display:block;">Today</button>
+    <button class="cal-today-btn" id="calTodayBtn">Today</button>
 
     <div id="calEmptyHint" class="empty-hint hidden">
-      No schedule set up yet.<br>Tap "Edit" above to add your start dates.
+      No schedule set up yet.<br>Tap ⚙️ below to add your start dates.
     </div>
 
     <div id="calBody" class="hidden">
@@ -505,434 +576,370 @@
         <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
       </div>
       <div class="cal-grid" id="calGrid"></div>
-
       <div class="day-detail" id="dayDetail"></div>
-
       <div class="cal-legend">
-        <div class="row"><span class="swatch" style="background:var(--upper)"></span>Upper — wear</div>
-        <div class="row"><span class="swatch hollow" style="color:var(--upper)"></span>Upper — pause</div>
-        <div class="row"><span class="swatch" style="background:var(--lower)"></span>Lower — wear</div>
-        <div class="row"><span class="swatch hollow" style="color:var(--lower)"></span>Lower — pause</div>
+        <div class="row"><span class="swatch" style="background:var(--upper)"></span>Upper — wear<span class="swatch hollow" style="color:var(--upper);margin-left:10px"></span>Upper — pause</div>
+        <div class="row"><span class="swatch" style="background:var(--lower)"></span>Lower — wear<span class="swatch hollow" style="color:var(--lower);margin-left:10px"></span>Lower — pause</div>
       </div>
     </div>
   </div>
 
-  <!-- SETUP VIEW -->
+  <!-- EDIT VIEW -->
   <div id="setupView" class="hidden">
 
     <div class="setup-card">
       <div class="setup-head"><span class="dot upper"></span><h2>Upper brace</h2></div>
-      <div class="field-row">
-        <div class="field">
-          <label for="upperStart">Start date</label>
-          <input type="date" id="upperStart">
+      <div class="setup-body">
+        <div class="field-row">
+          <div class="field">
+            <label for="upperStart">Start date</label>
+            <input type="date" id="upperStart">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="upperWear">Wear days</label>
+            <input type="number" id="upperWear" min="1" value="3">
+          </div>
+          <div class="field">
+            <label for="upperPause">Pause days</label>
+            <input type="number" id="upperPause" min="0" value="1">
+          </div>
         </div>
       </div>
-      <div class="field-row">
-        <div class="field">
-          <label for="upperWear">Wear days</label>
-          <input type="number" id="upperWear" min="1" value="3">
-        </div>
-        <div class="field">
-          <label for="upperPause">Pause days</label>
-          <input type="number" id="upperPause" min="0" value="1">
-        </div>
-      </div>
-      <button class="btn primary upper" id="addUpperBtn">Save</button>
     </div>
 
     <div class="setup-card">
       <div class="setup-head"><span class="dot lower"></span><h2>Lower brace</h2></div>
-      <div class="field-row">
-        <div class="field">
-          <label for="lowerStart">Start date</label>
-          <input type="date" id="lowerStart">
+      <div class="setup-body">
+        <div class="field-row">
+          <div class="field">
+            <label for="lowerStart">Start date</label>
+            <input type="date" id="lowerStart">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="lowerWear">Wear days</label>
+            <input type="number" id="lowerWear" min="1" value="4">
+          </div>
+          <div class="field">
+            <label for="lowerPause">Pause days</label>
+            <input type="number" id="lowerPause" min="0" value="1">
+          </div>
         </div>
       </div>
-      <div class="field-row">
-        <div class="field">
-          <label for="lowerWear">Wear days</label>
-          <input type="number" id="lowerWear" min="1" value="4">
-        </div>
-        <div class="field">
-          <label for="lowerPause">Pause days</label>
-          <input type="number" id="lowerPause" min="0" value="1">
-        </div>
-      </div>
-      <button class="btn primary lower" id="addLowerBtn">Save</button>
     </div>
 
-    <p style="font-size:12.5px; color:var(--ink-faint); text-align:center; line-height:1.5; margin: 18px 8px;">
-      If your dentist changes your wear/pause days, just update the numbers here and save — the whole schedule recalculates from your start date.
-    </p>
+    <div class="setup-card">
+      <div class="setup-head"><span class="emoji-icon">📅</span><h2>Next dentist control</h2></div>
+      <div class="setup-body">
+        <div class="field-row">
+          <div class="field">
+            <label for="controlDate">Date</label>
+            <input type="date" id="controlDate">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="save-btn" id="saveAllBtn">Save</button>
+
   </div>
 
+</div>
+
+<!-- Bottom tab bar -->
+<div class="tabbar">
+  <button id="tabTodayBtn" class="active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2C8.5 2 5.5 4.5 5.5 8c0 4.5 6.5 12 6.5 12s6.5-7.5 6.5-12c0-3.5-3-6-6-6z"/>
+      <circle cx="12" cy="8" r="2"/>
+    </svg>
+    Today
+  </button>
+  <button id="tabCalendarBtn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="4" width="18" height="18" rx="2"/>
+      <line x1="3" y1="9" x2="21" y2="9"/>
+      <line x1="8" y1="2" x2="8" y2="6"/>
+      <line x1="16" y1="2" x2="16" y2="6"/>
+      <line x1="7" y1="13" x2="9" y2="13"/>
+      <line x1="11" y1="13" x2="13" y2="13"/>
+      <line x1="15" y1="13" x2="17" y2="13"/>
+      <line x1="7" y1="17" x2="9" y2="17"/>
+      <line x1="11" y1="17" x2="13" y2="17"/>
+    </svg>
+    Calendar
+  </button>
+  <button id="tabEditBtn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+    </svg>
+    Edit
+  </button>
 </div>
 
 <script>
 /* ---------- Data model ----------
   state = {
-    upper: [ {start:"YYYY-MM-DD", wear:3, pause:1} ]  // at most one phase
+    upper: [ {start:"YYYY-MM-DD", wear:3, pause:1} ]
     lower: [ ... ]
+    controlDate: "YYYY-MM-DD" | null
   }
-  Day 1 of a phase = first wear day. After `wear` days, `pause` days off, then repeats indefinitely.
-  Kept as a 1-item array (instead of a single object) so the date/cycle math below didn't need changing.
 -------------------------------- */
 
 const STORAGE_KEY = "braceScheduleState_v1";
-
 function loadState(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(raw) return JSON.parse(raw);
-  }catch(e){}
-  return { upper: [], lower: [] };
+  try{ const raw = localStorage.getItem(STORAGE_KEY); if(raw) return JSON.parse(raw); }catch(e){}
+  return { upper: [], lower: [], controlDate: null };
 }
-
-function saveState(){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-}
-
+function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
 let state = loadState();
 
-// ---------- Date helpers (all local, no timezone math beyond simple day arithmetic) ----------
-function parseISO(s){
-  const [y,m,d] = s.split("-").map(Number);
-  return new Date(y, m-1, d);
-}
+// ---------- Date helpers ----------
+function parseISO(s){ const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d); }
 function toISO(date){
-  const y = date.getFullYear();
-  const m = String(date.getMonth()+1).padStart(2,"0");
-  const d = String(date.getDate()).padStart(2,"0");
+  const y=date.getFullYear(), m=String(date.getMonth()+1).padStart(2,"0"), d=String(date.getDate()).padStart(2,"0");
   return `${y}-${m}-${d}`;
 }
-function addDays(date, n){
-  const d = new Date(date);
-  d.setDate(d.getDate()+n);
-  return d;
-}
+function addDays(date,n){ const d=new Date(date); d.setDate(d.getDate()+n); return d; }
 function todayDate(){
-  const d = new Date();
-  d.setHours(0,0,0,0);
-  return d;
+  const now=new Date(), d=new Date(now);
+  if(now.getHours()<6) d.setDate(d.getDate()-1);
+  d.setHours(0,0,0,0); return d;
 }
-function dayDiff(a,b){
-  // a - b in whole days
-  const MS = 24*60*60*1000;
-  return Math.round((a.getTime()-b.getTime())/MS);
-}
-function fmtShort(date){
-  return date.toLocaleDateString(undefined, { weekday:'short', month:'short', day:'numeric' });
-}
-function fmtFull(date){
-  return date.toLocaleDateString(undefined, { weekday:'long', month:'long', day:'numeric' });
-}
+function dayDiff(a,b){ return Math.round((a.getTime()-b.getTime())/86400000); }
+function fmtShort(date){ return date.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'}); }
+function fmtFull(date){ return date.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'}); }
 
-// ---------- Core schedule logic ----------
-// Given phases (sorted) and a target date, find the active phase for that date (the last phase whose start <= date)
-function activePhaseFor(phases, date){
-  let active = null;
-  for(const p of phases){
-    const ps = parseISO(p.start);
-    if(dayDiff(ps, date) <= 0){
-      active = p;
-    } else {
-      break;
-    }
-  }
+// ---------- Schedule logic ----------
+function activePhaseFor(phases,date){
+  let active=null;
+  for(const p of phases){ if(dayDiff(parseISO(p.start),date)<=0) active=p; else break; }
   return active;
 }
-
-// Returns { wearing: bool, dayInCycle: n, cycleLen: n } or null if no phase active yet
-function statusOnDate(phases, date){
+function statusOnDate(phases,date){
   if(!phases.length) return null;
-  const phase = activePhaseFor(phases, date);
-  if(!phase) return null; // date is before the first phase starts
-  const ps = parseISO(phase.start);
-  const offset = dayDiff(date, ps); // 0-based days since this phase started
-  const cycleLen = phase.wear + phase.pause;
-  const posInCycle = ((offset % cycleLen) + cycleLen) % cycleLen; // 0-based
-  const wearing = posInCycle < phase.wear;
-  return {
-    wearing,
-    dayInCycle: posInCycle + 1, // 1-based for display
-    cycleLen,
-    wearLen: phase.wear,
-    pauseLen: phase.pause
-  };
+  const phase=activePhaseFor(phases,date);
+  if(!phase) return null;
+  const offset=dayDiff(date,parseISO(phase.start));
+  const cycleLen=phase.wear+phase.pause;
+  const pos=((offset%cycleLen)+cycleLen)%cycleLen;
+  return {wearing:pos<phase.wear, dayInCycle:pos+1, wearLen:phase.wear, pauseLen:phase.pause};
 }
 
-// ---------- Rendering: pre-fill setup inputs from saved state ----------
-function fillEditInputs(key){
-  const phase = state[key][0];
-  if(!phase) return; // leave defaults (today's date, default wear/pause) in place
-  document.getElementById(key + "Start").value = phase.start;
-  document.getElementById(key + "Wear").value = phase.wear;
-  document.getElementById(key + "Pause").value = phase.pause;
-}
-
-// ---------- Rendering: Today view ----------
+// ---------- Today view ----------
 function renderToday(){
-  const today = todayDate();
-  document.getElementById("todayDateLabel").textContent = fmtShort(today);
-  document.getElementById("todayLabel").textContent = "Today — " + fmtFull(today);
+  const today=todayDate();
+  document.getElementById("todayDateLabel").textContent=fmtShort(today);
 
-  const upperStatus = statusOnDate(state.upper, today);
-  const lowerStatus = statusOnDate(state.lower, today);
+  const us=statusOnDate(state.upper,today);
+  const ls=statusOnDate(state.lower,today);
+  const hasAny=state.upper.length||state.lower.length;
 
-  const hasAny = state.upper.length || state.lower.length;
-
-  document.getElementById("emptyHint").classList.toggle("hidden", hasAny);
-  document.getElementById("todayCard").classList.toggle("hidden", !hasAny);
+  document.getElementById("emptyHint").classList.toggle("hidden", !!hasAny);
+  document.getElementById("statusGrid").classList.toggle("hidden", !hasAny);
   document.getElementById("upcomingSection").classList.toggle("hidden", !hasAny);
+
+  // Control banner
+  const bannerEl=document.getElementById("controlBanner");
+  if(state.controlDate){
+    const ctrl=parseISO(state.controlDate);
+    const diff=dayDiff(ctrl,today);
+    bannerEl.classList.remove("hidden");
+    let cls,icon,line1,line2;
+    if(diff<0){ cls="future"; icon="📅"; line1="Last control: "+fmtShort(ctrl); line2=""; }
+    else if(diff===0){ cls="today"; icon="🦷"; line1="Dentist control TODAY"; line2=""; }
+    else if(diff<=7){ cls="soon"; icon="⚠️"; line1=`Control in <b>${diff} day${diff===1?'':'s'}</b>`; line2=fmtShort(ctrl); }
+    else { cls="future"; icon="📅"; line1="Next control"; line2=fmtShort(ctrl)+" · in "+diff+" days"; }
+    const iso=state.controlDate.replace(/-/g,"");
+    const gcalUrl=`https://calendar.google.com/calendar/render?action=TEMPLATE&text=Dentist+Control&dates=${iso}T110000/${iso}T120000&details=Orthodontic+control+appointment`;
+    const gcalIcon=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#4285F4" d="M21.5 3h-3V1.5h-1.5V3h-9V1.5H6.5V3h-3A1.5 1.5 0 0 0 2 4.5v17A1.5 1.5 0 0 0 3.5 23h18a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 21.5 3zm0 18.5h-18V9h18v12.5z"/><rect fill="#34A853" x="10" y="12" width="4" height="1.5" rx=".5"/><rect fill="#FBBC04" x="10" y="15" width="4" height="1.5" rx=".5"/><rect fill="#4285F4" x="6" y="12" width="3" height="1.5" rx=".5"/><rect fill="#EA4335" x="6" y="15" width="3" height="1.5" rx=".5"/><rect fill="#4285F4" x="15" y="12" width="3" height="1.5" rx=".5"/><rect fill="#34A853" x="15" y="15" width="3" height="1.5" rx=".5"/></svg>`;
+    const gcalBtn=diff>=0?`<a class="cb-gcal" href="${gcalUrl}" target="_blank" rel="noopener" title="Add to Google Calendar">${gcalIcon}</a>`:"";
+    bannerEl.innerHTML=`<div class="control-banner ${cls}"><span class="cb-icon">${icon}</span><div class="cb-text">${line1}${line2?`<div class="cb-days">${line2}</div>`:''}</div>${gcalBtn}</div>`;
+  } else {
+    bannerEl.classList.add("hidden");
+  }
 
   if(!hasAny) return;
 
-  const rowsEl = document.getElementById("todayRows");
-  rowsEl.innerHTML = "";
-
-  function buildRow(name, cls, status){
-    const row = document.createElement("div");
-    row.className = "brace-row " + cls;
+  // Hero tiles
+  function setTile(idStatus, idSub, status, colorClass){
+    const statusEl=document.getElementById(idStatus);
+    const subEl=document.getElementById(idSub);
     if(!status){
-      row.innerHTML = `
-        <span class="dot ${cls}"></span>
-        <span class="brace-name">${name}</span>
-        <span class="brace-status">No start date set yet</span>
-      `;
-      return row;
+      statusEl.textContent="—"; statusEl.className="tile-status"; subEl.textContent=""; return;
     }
-    const pillClass = status.wearing ? "wear" : "pause";
-    const pillText = status.wearing ? "WEAR" : "PAUSE";
-    const detail = status.wearing
-      ? `Wear day ${status.dayInCycle} of ${status.wearLen}`
-      : `Pause day ${status.dayInCycle - status.wearLen} of ${status.pauseLen}`;
-    row.innerHTML = `
-      <span class="dot ${cls}"></span>
-      <span class="brace-name">${name}</span>
-      <span class="brace-status">${detail}</span>
-      <span class="pill ${pillClass}">${pillText}</span>
-    `;
-    return row;
+    if(status.wearing){
+      statusEl.textContent="WEAR";
+      statusEl.className="tile-status "+colorClass;
+      subEl.textContent=`Day ${status.dayInCycle} of ${status.wearLen}`;
+    } else {
+      statusEl.textContent="PAUSE";
+      statusEl.className="tile-status pause";
+      subEl.textContent=`Day ${status.dayInCycle-status.wearLen} of ${status.pauseLen}`;
+    }
   }
+  setTile("tileUpperStatus","tileUpperSub",us,"wear-upper");
+  setTile("tileLowerStatus","tileLowerSub",ls,"wear-lower");
 
-  rowsEl.appendChild(buildRow("Upper", "upper", upperStatus));
-  rowsEl.appendChild(buildRow("Lower", "lower", lowerStatus));
-
-  // Upcoming 14 days
-  const listEl = document.getElementById("upcomingList");
-  listEl.innerHTML = "";
-  for(let i=0;i<14;i++){
-    const d = addDays(today, i);
-    const us = statusOnDate(state.upper, d);
-    const ls = statusOnDate(state.lower, d);
-    const row = document.createElement("div");
-    row.className = "day-row" + (i===0 ? " is-today" : "");
-    const uTag = us ? (us.wearing ? `<span class="tag wear-u">Upper wear</span>` : `<span class="tag pause">Upper pause</span>`) : `<span class="tag pause">—</span>`;
-    const lTag = ls ? (ls.wearing ? `<span class="tag wear-l">Lower wear</span>` : `<span class="tag pause">Lower pause</span>`) : `<span class="tag pause">—</span>`;
-    row.innerHTML = `
-      <span class="day-date">${i===0 ? "Today" : fmtShort(d)}</span>
-      ${uTag}
-      ${lTag}
-    `;
+  // Upcoming 7 days
+  const listEl=document.getElementById("upcomingList");
+  listEl.innerHTML="";
+  for(let i=1;i<=7;i++){
+    const d=addDays(today,i);
+    const us2=statusOnDate(state.upper,d);
+    const ls2=statusOnDate(state.lower,d);
+    const row=document.createElement("div");
+    row.className="day-row";
+    const uTag=us2?(us2.wearing?`<span class="tag wear-u">Wear</span>`:`<span class="tag pause">—</span>`):`<span class="tag pause">—</span>`;
+    const lTag=ls2?(ls2.wearing?`<span class="tag wear-l">Wear</span>`:`<span class="tag pause">—</span>`):`<span class="tag pause">—</span>`;
+    row.innerHTML=`<span class="day-date">${fmtShort(d)}</span>${uTag}${lTag}`;
     listEl.appendChild(row);
   }
 }
 
-// ---------- Calendar state ----------
-let calViewDate = todayDate(); // first of the month being viewed gets derived from this
-let selectedDetailISO = null;
-
-function startOfMonth(date){
-  return new Date(date.getFullYear(), date.getMonth(), 1);
-}
+// ---------- Calendar ----------
+let calViewDate=todayDate();
+let selectedDetailISO=null;
 
 function renderCalendar(){
-  const today = todayDate();
-  const monthStart = startOfMonth(calViewDate);
-  const monthLabel = monthStart.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
-  document.getElementById("calMonthLabel").textContent = monthLabel;
+  const today=todayDate();
+  const monthStart=new Date(calViewDate.getFullYear(),calViewDate.getMonth(),1);
+  document.getElementById("calMonthLabel").textContent=monthStart.toLocaleDateString(undefined,{month:'long',year:'numeric'});
 
-  const hasAny = state.upper.length || state.lower.length;
-  document.getElementById("calEmptyHint").classList.toggle("hidden", hasAny);
-  document.getElementById("calBody").classList.toggle("hidden", !hasAny);
+  const hasAny=state.upper.length||state.lower.length;
+  document.getElementById("calEmptyHint").classList.toggle("hidden",hasAny);
+  document.getElementById("calBody").classList.toggle("hidden",!hasAny);
   if(!hasAny) return;
 
-  // Monday-first grid: figure out how many blank cells before day 1
-  const jsDow = monthStart.getDay(); // 0=Sun..6=Sat
-  const leadingBlanks = (jsDow + 6) % 7; // 0 if Monday, ..., 6 if Sunday
-
-  const daysInMonth = new Date(monthStart.getFullYear(), monthStart.getMonth()+1, 0).getDate();
-
-  const grid = document.getElementById("calGrid");
-  grid.innerHTML = "";
+  const leadingBlanks=(monthStart.getDay()+6)%7;
+  const daysInMonth=new Date(monthStart.getFullYear(),monthStart.getMonth()+1,0).getDate();
+  const grid=document.getElementById("calGrid");
+  grid.innerHTML="";
 
   for(let i=0;i<leadingBlanks;i++){
-    const blank = document.createElement("div");
-    blank.className = "cal-cell empty";
-    grid.appendChild(blank);
+    const b=document.createElement("div"); b.className="cal-cell empty"; grid.appendChild(b);
   }
-
-  for(let day=1; day<=daysInMonth; day++){
-    const d = new Date(monthStart.getFullYear(), monthStart.getMonth(), day);
-    const iso = toISO(d);
-    const us = statusOnDate(state.upper, d);
-    const ls = statusOnDate(state.lower, d);
-    const isToday = dayDiff(d, today) === 0;
-
-    const cell = document.createElement("div");
-    cell.className = "cal-cell" + (isToday ? " is-today" : "");
-    cell.dataset.iso = iso;
-
-    const uMarkClass = us ? (us.wearing ? "u-wear" : "u-pause") : "none";
-    const lMarkClass = ls ? (ls.wearing ? "l-wear" : "l-pause") : "none";
-
-    cell.innerHTML = `
-      <span class="cal-daynum">${day}</span>
-      <span class="cal-marks">
-        <span class="cal-mark ${uMarkClass}"></span>
-        <span class="cal-mark ${lMarkClass}"></span>
-      </span>
-    `;
-    cell.addEventListener("click", ()=> showDayDetail(iso));
+  for(let day=1;day<=daysInMonth;day++){
+    const d=new Date(monthStart.getFullYear(),monthStart.getMonth(),day);
+    const iso=toISO(d);
+    const us=statusOnDate(state.upper,d);
+    const ls=statusOnDate(state.lower,d);
+    const isToday=dayDiff(d,today)===0;
+    const cell=document.createElement("div");
+    cell.className="cal-cell"+(isToday?" is-today":"");
+    cell.dataset.iso=iso;
+    const uCls=us?(us.wearing?"u-wear":"u-pause"):"none";
+    const lCls=ls?(ls.wearing?"l-wear":"l-pause"):"none";
+    cell.innerHTML=`<span class="cal-daynum">${day}</span><span class="cal-marks"><span class="cal-mark ${uCls}"></span><span class="cal-mark ${lCls}"></span></span>`;
+    cell.addEventListener("click",()=>showDayDetail(iso));
     grid.appendChild(cell);
   }
 
-  // restore or default the detail panel
-  if(selectedDetailISO && selectedDetailISO.startsWith(toISO(monthStart).slice(0,7))){
-    showDayDetail(selectedDetailISO, true);
-  } else {
-    const defaultISO = (monthStart.getFullYear()===today.getFullYear() && monthStart.getMonth()===today.getMonth())
-      ? toISO(today)
-      : toISO(monthStart);
-    showDayDetail(defaultISO, true);
-  }
+  const defaultISO=(monthStart.getFullYear()===today.getFullYear()&&monthStart.getMonth()===today.getMonth())
+    ?toISO(today):toISO(monthStart);
+  showDayDetail(selectedDetailISO&&selectedDetailISO.startsWith(toISO(monthStart).slice(0,7))?selectedDetailISO:defaultISO, true);
 }
 
-function showDayDetail(iso, skipRehighlight){
-  selectedDetailISO = iso;
-  const d = parseISO(iso);
-  const today = todayDate();
-  const isToday = dayDiff(d, today) === 0;
+function showDayDetail(iso, skipHighlight){
+  selectedDetailISO=iso;
+  const d=parseISO(iso);
+  const today=todayDate();
+  const isToday=dayDiff(d,today)===0;
+  const us=statusOnDate(state.upper,d);
+  const ls=statusOnDate(state.lower,d);
 
-  const us = statusOnDate(state.upper, d);
-  const ls = statusOnDate(state.lower, d);
-
-  function line(name, cls, status){
+  function line(name,cls,status){
     if(!status) return `<div class="brace-row ${cls}"><span class="dot ${cls}"></span><span class="brace-name">${name}</span><span class="brace-status">No data</span></div>`;
-    const pillClass = status.wearing ? "wear" : "pause";
-    const pillText = status.wearing ? "WEAR" : "PAUSE";
-    const detail = status.wearing
-      ? `Wear day ${status.dayInCycle} of ${status.wearLen}`
-      : `Pause day ${status.dayInCycle - status.wearLen} of ${status.pauseLen}`;
-    return `<div class="brace-row ${cls}"><span class="dot ${cls}"></span><span class="brace-name">${name}</span><span class="brace-status">${detail}</span><span class="pill ${pillClass}">${pillText}</span></div>`;
+    const pillCls=status.wearing?"wear":"pause";
+    const pillTxt=status.wearing?"WEAR":"PAUSE";
+    const detail=status.wearing?`Wear day ${status.dayInCycle} of ${status.wearLen}`:`Pause day ${status.dayInCycle-status.wearLen} of ${status.pauseLen}`;
+    return `<div class="brace-row ${cls}"><span class="dot ${cls}"></span><span class="brace-name">${name}</span><span class="brace-status">${detail}</span><span class="pill ${pillCls}">${pillTxt}</span></div>`;
   }
 
-  const detailEl = document.getElementById("dayDetail");
-  detailEl.innerHTML = `
-    <div class="dd-date">${isToday ? "Today — " : ""}${fmtFull(d)}</div>
-    ${line("Upper","upper",us)}
-    ${line("Lower","lower",ls)}
-  `;
+  const detailEl=document.getElementById("dayDetail");
+  detailEl.innerHTML=`<div class="dd-date">${isToday?"Today — ":""}${fmtFull(d)}</div>${line("Upper","upper",us)}${line("Lower","lower",ls)}`;
 
-  if(!skipRehighlight){
-    document.querySelectorAll(".cal-cell").forEach(c=> c.style.boxShadow = "");
-  }
-  const targetCell = document.querySelector(`.cal-cell[data-iso="${iso}"]`);
-  document.querySelectorAll(".cal-cell").forEach(c=> c.style.outline = "");
-  if(targetCell){
-    targetCell.style.outline = "2px solid var(--ink-dim)";
+  if(!skipHighlight){
+    document.querySelectorAll(".cal-cell").forEach(c=>c.classList.remove("selected"));
+    const t=document.querySelector(`.cal-cell[data-iso="${iso}"]`);
+    if(t) t.classList.add("selected");
   }
 }
 
-document.getElementById("calPrevBtn").addEventListener("click", ()=>{
-  calViewDate = new Date(calViewDate.getFullYear(), calViewDate.getMonth()-1, 1);
-  renderCalendar();
-});
-document.getElementById("calNextBtn").addEventListener("click", ()=>{
-  calViewDate = new Date(calViewDate.getFullYear(), calViewDate.getMonth()+1, 1);
-  renderCalendar();
-});
-document.getElementById("calTodayBtn").addEventListener("click", ()=>{
-  calViewDate = todayDate();
-  selectedDetailISO = toISO(todayDate());
-  renderCalendar();
-});
+document.getElementById("calPrevBtn").addEventListener("click",()=>{ calViewDate=new Date(calViewDate.getFullYear(),calViewDate.getMonth()-1,1); renderCalendar(); });
+document.getElementById("calNextBtn").addEventListener("click",()=>{ calViewDate=new Date(calViewDate.getFullYear(),calViewDate.getMonth()+1,1); renderCalendar(); });
+document.getElementById("calTodayBtn").addEventListener("click",()=>{ calViewDate=todayDate(); selectedDetailISO=toISO(todayDate()); renderCalendar(); });
 
-// ---------- View switching (3 tabs) ----------
-const views = {
-  today: document.getElementById("todayView"),
-  calendar: document.getElementById("calendarView"),
-  edit: document.getElementById("setupView")
-};
-const tabBtns = {
-  today: document.getElementById("tabTodayBtn"),
-  calendar: document.getElementById("tabCalendarBtn"),
-  edit: document.getElementById("tabEditBtn")
-};
+// ---------- Tab switching ----------
+const views={today:document.getElementById("todayView"),calendar:document.getElementById("calendarView"),edit:document.getElementById("setupView")};
+const tabBtns={today:document.getElementById("tabTodayBtn"),calendar:document.getElementById("tabCalendarBtn"),edit:document.getElementById("tabEditBtn")};
 
 function switchTab(name){
   Object.keys(views).forEach(k=>{
-    views[k].classList.toggle("hidden", k !== name);
-    tabBtns[k].classList.toggle("active", k === name);
+    views[k].classList.toggle("hidden",k!==name);
+    tabBtns[k].classList.toggle("active",k===name);
   });
-  if(name === "today") renderToday();
-  if(name === "calendar") renderCalendar();
-  if(name === "edit"){ fillEditInputs("upper"); fillEditInputs("lower"); }
+  if(name==="today") renderToday();
+  if(name==="calendar") renderCalendar();
+  if(name==="edit"){ fillEditInputs("upper"); fillEditInputs("lower"); fillControlInput(); }
 }
 
-tabBtns.today.addEventListener("click", ()=> switchTab("today"));
-tabBtns.calendar.addEventListener("click", ()=> switchTab("calendar"));
-tabBtns.edit.addEventListener("click", ()=> switchTab("edit"));
+tabBtns.today.addEventListener("click",()=>switchTab("today"));
+tabBtns.calendar.addEventListener("click",()=>switchTab("calendar"));
+tabBtns.edit.addEventListener("click",()=>switchTab("edit"));
 
-// ---------- Save handlers (one phase per brace — saving replaces it) ----------
-function savePhase(key){
-  const startInput = document.getElementById(key + "Start");
-  const wearInput = document.getElementById(key + "Wear");
-  const pauseInput = document.getElementById(key + "Pause");
+// ---------- Edit inputs ----------
+function fillEditInputs(key){
+  const phase=state[key][0];
+  if(!phase) return;
+  document.getElementById(key+"Start").value=phase.start;
+  document.getElementById(key+"Wear").value=phase.wear;
+  document.getElementById(key+"Pause").value=phase.pause;
+}
+function fillControlInput(){
+  document.getElementById("controlDate").value=state.controlDate||"";
+}
 
-  const start = startInput.value;
-  const wear = parseInt(wearInput.value, 10);
-  const pause = parseInt(pauseInput.value, 10);
+// ---------- Save ----------
+function saveAll(){
+  const uStart=document.getElementById("upperStart");
+  const uWear=document.getElementById("upperWear");
+  const uPause=document.getElementById("upperPause");
+  if(!uStart.value){uStart.focus();return;}
+  if(!parseInt(uWear.value)||parseInt(uWear.value)<1){uWear.focus();return;}
+  if(isNaN(parseInt(uPause.value))||parseInt(uPause.value)<0){uPause.focus();return;}
 
-  if(!start){
-    startInput.focus();
-    return;
-  }
-  if(!wear || wear < 1){
-    wearInput.focus();
-    return;
-  }
-  if(isNaN(pause) || pause < 0){
-    pauseInput.focus();
-    return;
-  }
+  const lStart=document.getElementById("lowerStart");
+  const lWear=document.getElementById("lowerWear");
+  const lPause=document.getElementById("lowerPause");
+  if(!lStart.value){lStart.focus();return;}
+  if(!parseInt(lWear.value)||parseInt(lWear.value)<1){lWear.focus();return;}
+  if(isNaN(parseInt(lPause.value))||parseInt(lPause.value)<0){lPause.focus();return;}
 
-  state[key] = [{ start, wear, pause }];
+  state.upper=[{start:uStart.value,wear:parseInt(uWear.value),pause:parseInt(uPause.value)}];
+  state.lower=[{start:lStart.value,wear:parseInt(lWear.value),pause:parseInt(lPause.value)}];
+  state.controlDate=document.getElementById("controlDate").value||null;
   saveState();
   renderToday();
-
-  startInput.blur();
+  document.activeElement.blur();
 }
-
-document.getElementById("addUpperBtn").addEventListener("click", ()=> savePhase("upper"));
-document.getElementById("addLowerBtn").addEventListener("click", ()=> savePhase("lower"));
+document.getElementById("saveAllBtn").addEventListener("click",saveAll);
 
 // ---------- Init ----------
 (function init(){
-  const todayISO = toISO(todayDate());
-  document.getElementById("upperStart").value = todayISO;
-  document.getElementById("lowerStart").value = todayISO;
-  selectedDetailISO = todayISO;
-
+  const todayISO=toISO(todayDate());
+  document.getElementById("upperStart").value=todayISO;
+  document.getElementById("lowerStart").value=todayISO;
+  selectedDetailISO=todayISO;
   fillEditInputs("upper");
   fillEditInputs("lower");
-
+  fillControlInput();
   renderToday();
-
-  if(!state.upper.length && !state.lower.length){
-    switchTab("edit");
-  }
+  if(!state.upper.length&&!state.lower.length) switchTab("edit");
 })();
 </script>
 
